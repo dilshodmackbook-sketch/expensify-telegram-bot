@@ -1,0 +1,47 @@
+name: Expensify Telegram Notifier
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # har 5 daqiqada
+  workflow_dispatch:        # qo'lda ishga tushirish uchun
+
+permissions:
+  contents: write           # state.json'ni commit qilish uchun
+
+concurrency:
+  group: expensify-notifier
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run notifier
+        env:
+          GITHUB_USERNAME: ${{ vars.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py
+
+      - name: Commit updated state
+        run: |
+          if [[ -n "$(git status --porcelain state.json)" ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state.json
+            git commit -m "chore: update state [skip ci]"
+            git push
+          else
+            echo "No state changes to commit."
+          fi
