@@ -1,7 +1,7 @@
 {
   "initialized": true,
   "known_assignments": [],
-  "last_comment_check": "2026-06-23T11:54:09Z",
+  "last_comment_check": "2026-06-23T14:27:29Z",
   "notified_ids": [
     "comment:4473925485",
     "comment:4475085875",
@@ -235,6 +235,9 @@
     "comment:4768979684",
     "comment:4769343665",
     "comment:4769792689",
-    "comment:4770619276"
+    "comment:4770619276",
+    "comment:4779619218",
+    "comment:4779812891",
+    "comment:4780098063"
   ]
 }
